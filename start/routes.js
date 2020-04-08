@@ -18,3 +18,4 @@ const Route = use("Route");
 
 Route.resource("categories", "CategoryController");
 Route.resource("foods", "FoodController");
+Route.resource("ingredients", "IngredientController");
