@@ -4,7 +4,10 @@ const Food = use("App/Models/Food");
 
 class FoodController {
   async index() {
-    const foods = await Food.query().with("category").fetch();
+    const foods = await Food.query()
+      .with("category")
+      .with("ingredients")
+      .fetch();
 
     const parse_foods = foods.toJSON().map((food) => {
       return {
@@ -13,6 +16,9 @@ class FoodController {
         sub_description: food.sub_description,
         category: food.category.name,
         price: food.price,
+        ingredients: food.ingredients.map((ingredient) => {
+          return { name: ingredient.name };
+        }),
       };
     });
 
@@ -26,7 +32,14 @@ class FoodController {
       "price",
       "category_id",
     ]);
+
     const food = await Food.create(data);
+
+    /// Cadastrar os ingredientes os ingredientes associados a ela
+    const ingredients = request.input("ingredients");
+
+    await food.ingredients().attach(ingredients);
+
     return food;
   }
 
@@ -60,6 +73,11 @@ class FoodController {
 
     food.merge(data);
     await food.save();
+
+    const ingredients = request.input("ingredients");
+
+    await food.ingredients().sync(ingredients);
+
     return food;
   }
 
