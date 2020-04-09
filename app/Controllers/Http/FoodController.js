@@ -6,7 +6,9 @@ const Database = use("Database");
 class FoodController {
   async index() {
     const foods = await Food.query()
+      .with("file")
       .with("category")
+
       .with("ingredients")
       .fetch();
 
@@ -17,6 +19,7 @@ class FoodController {
         sub_description: food.sub_description,
         category: food.category.name,
         price: food.price,
+        file: food.file ? food.file.url : "",
         ingredients: food.ingredients.map((ingredient) => {
           return { name: ingredient.name };
         }),

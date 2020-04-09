@@ -21,3 +21,5 @@ Route.resource("foods", "FoodController");
 Route.resource("ingredients", "IngredientController");
 
 Route.post("files", "FileController.store");
+
+Route.get("files/:id", "FileController.show");

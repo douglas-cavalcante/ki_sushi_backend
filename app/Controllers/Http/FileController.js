@@ -38,7 +38,17 @@ class FileController {
     }
   }
 
-  async show({ params, request, response, view }) {}
+  async show({ params, response }) {
+    try {
+      const file = await File.findOrFail(params.id);
+
+      return response.download(Helpers.tmpPath(`uploads/${file.file}`));
+    } catch (error) {
+      return response
+        .status(error.status)
+        .send({ error: { message: "Arquivo não existe" } });
+    }
+  }
 }
 
 module.exports = FileController;

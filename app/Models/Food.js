@@ -13,6 +13,10 @@ class Food extends Model {
       "App/Models/FoodIngredient"
     );
   }
+
+  file() {
+    return this.belongsTo("App/Models/File");
+  }
 }
 
 module.exports = Food;
