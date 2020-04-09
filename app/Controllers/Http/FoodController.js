@@ -1,6 +1,7 @@
 "use strict";
 
 const Food = use("App/Models/Food");
+const Database = use("Database");
 
 class FoodController {
   async index() {
@@ -26,11 +27,15 @@ class FoodController {
   }
 
   async store({ request }) {
+    // Corrigir Transcation
+    const trx = await Database.beginTransaction();
+
     const data = request.only([
       "description",
       "sub_description",
       "price",
       "category_id",
+      "file_id",
     ]);
 
     const food = await Food.create(data);
@@ -38,7 +43,9 @@ class FoodController {
     /// Cadastrar os ingredientes os ingredientes associados a ela
     const ingredients = request.input("ingredients");
 
-    await food.ingredients().attach(ingredients);
+    await food.ingredients().attach(ingredients, null, trx);
+
+    await trx.commit();
 
     return food;
   }
@@ -61,6 +68,7 @@ class FoodController {
       "sub_description",
       "price",
       "category_id",
+      "file_id",
     ]);
 
     const food = await Food.find(params.id);
